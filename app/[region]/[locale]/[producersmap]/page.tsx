@@ -1,12 +1,16 @@
 import { getPage, getRegion } from "@/lib/clients/contentful";
 import Link from "next/link";
 
-export async function generateStaticParams() {
-  const locale = "fr" || "en";
-  const pages: any = await getPage(locale);
+export async function generateStaticParams({
+  params,
+}: {
+  params: { region: any; locale: string };
+}) {
+  const pages: any = await getPage(params.locale);
 
   return pages.map((element: any) => ({
-    region: element.title,
+    producersmap: element.sys.id,
+    region: element.sys.id,
   }));
 }
 
@@ -15,10 +19,9 @@ export default async function RegionIdPage({
 }: {
   params: { region: any; locale: string };
 }) {
-  console.log("langue", params);
   const { region } = params;
   const { locale } = params;
-  const selectedRegion: any = await getRegion(region, locale);
+  const selectedRegion: any = await getRegion(locale);
 
   // Fonction pour générer une position aléatoire dans une plage spécifique
   const getPosition = (min: any, max: any) => {
@@ -30,7 +33,7 @@ export default async function RegionIdPage({
       {selectedRegion.producersRefCollection.items.map((element: any) => (
         <Link
           key={element.producer}
-          href={`/${region}/producersmap/${element.producer}`}
+          href={`/${region}/${locale}/producersmap/${element.producer}`}
           style={{
             position: "absolute",
             top: getPosition(0, 500), // positions verticales

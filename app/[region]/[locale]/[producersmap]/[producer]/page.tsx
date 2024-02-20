@@ -1,24 +1,36 @@
-import Card from "@/app/[locale]/components/Card";
+import Card from "@/app/components/Card";
 import { getPage, getProducer } from "@/lib/clients/contentful";
 
-export async function generateStaticParams() {
-  const locale = "fr" || "en";
-
-  const pages: any = await getPage(locale);
+export async function generateStaticParams({
+  params,
+}: {
+  params: { producersmap: any; region: any; locale: string };
+}) {
+  const { producersmap, region, locale } = params;
+  const pages: any = await getPage(params.locale);
   const findProducer = pages.find(
     (element: any) => element.producersRefCollection?.items
   );
   const itemProducer = findProducer.producersRefCollection.items;
 
-  return itemProducer.map((element: any) => ({
-    producer: element.producer,
-  }));
+  const gg: any[] = [];
+  pages.forEach((e: any) => {
+    e.producersRefCollection?.items?.forEach((ee: any) => {
+      gg.push({
+        producersmap: e.sys.id,
+        region: e.sys.id,
+        producer: ee.producer,
+      });
+    });
+  });
+
+  return gg;
 }
 
 export default async function ProducersPage({
   params,
 }: {
-  params: { producer: any; locale: string };
+  params: { producer: any; locale: string; region: string };
 }) {
   const { producer } = params;
   const { locale } = params;

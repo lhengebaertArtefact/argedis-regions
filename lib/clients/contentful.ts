@@ -1,13 +1,3 @@
-import { createClient } from "contentful";
-
-import { Page } from "../types";
-
-
-const client = createClient({
-  space: process.env.CONTENTFUL_SPACE_ID || "",
-  accessToken: process.env.CONTENTFUL_ACCESS_TOKEN || "",
-});
-
 const fetchContentfulData = async (query: string): Promise<any> => {
 
   const res: any = await fetch(
@@ -33,6 +23,9 @@ export const getPage = async (locale: string): Promise<any | null> => {
     pageCollection(locale : "${transformLocale}") {
       items {
         title
+        sys {
+          id
+        }
         logo {
           url
         }
@@ -68,48 +61,48 @@ export const getPage = async (locale: string): Promise<any | null> => {
   return pages;
 }
 
-export const getRegion = async (slug: string, locale: string): Promise<any | null> => {
+export const getRegion = async (locale: string): Promise<any | null> => {
 
   const transformLocale = locale === "fr" ? "fr" : "en-US"
-  let query = `{
-    pageCollection(where: { title: "${slug}" }, locale : "${transformLocale}") {
-      items {
-        title
-        logo {
-          url
-        }
-        cardContent {
-          json
-        }
-        cardImage {
-          url
-        }
 
-        producersRefCollection(limit: 10) {
-          limit
-          items {
-            ... on Producer {
-              producer
-              buttonText
-              producerPhoto {
-                url
-              }
-              producerDescription {
-                json
+    let query = `{
+      pageCollection(locale : "${transformLocale}") {
+        items {
+          sys {
+            id
+          }
+          title
+          logo {
+            url
+          }
+          cardContent {
+            json
+          }
+          cardImage {
+            url
+          }
+  
+          producersRefCollection(limit: 10) {
+            limit
+            items {
+              ... on Producer {
+                producer
+                buttonText
+                producerPhoto {
+                  url
+                }
+                producerDescription {
+                  json
+                }
               }
             }
           }
         }
       }
-    }
-  }`;
-
-  const res = await fetchContentfulData(query);
-  const region: any | null = res.data.pageCollection.items[0] || null;
-
-  return region;
-};
-
+    }`;
+    const res = await fetchContentfulData(query);
+    return res.data.pageCollection.items[0] || null;
+}
 
 export const getProducer = async (slug: string, locale: string ): Promise<any | null> => {
 
@@ -118,6 +111,9 @@ export const getProducer = async (slug: string, locale: string ): Promise<any | 
   let query = `{
     pageCollection(locale : "${transformLocale}") {
       items {
+        sys {
+          id
+        }
         title
         logo {
           url
