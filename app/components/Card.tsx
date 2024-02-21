@@ -1,10 +1,10 @@
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 
 const Card = ({ data, numCard }: any) => {
-  const name = data[0].producer;
-  const photo = data[0].producerPhoto?.url;
-  const description = data[0].producerDescription;
-  const buttonText = data[0].buttonText;
+  const name = data.producer;
+  const photo = data.producerPhoto?.url;
+  const description = data.producerDescription;
+  const buttonText = data.buttonText;
 
   return (
     <div className="card">

@@ -1,27 +1,50 @@
-import { getPage, getRegion } from "@/lib/clients/contentful";
+import {
+  getAllPages,
+  getAllProducerId,
+  getAllRegionsId,
+  getPage,
+  getRegion,
+} from "@/lib/clients/contentful";
 import Link from "next/link";
 
 export async function generateStaticParams({
   params,
 }: {
-  params: { region: any; locale: string };
+  params: { producersmap: any; region: any; locale: string };
 }) {
+  const { producersmap, locale } = params;
   const pages: any = await getPage(params.locale);
 
-  return pages.map((element: any) => ({
-    producersmap: element.sys.id,
-    region: element.sys.id,
-  }));
+  const gg: any[] = [];
+  pages.forEach((e: any) => {
+    e.producersRefCollection?.items?.forEach((ee: any) => {
+      gg.push(
+        {
+          region: e.sys.id,
+          locale: "fr",
+          producersmap: ee.sys.id,
+        },
+        {
+          region: e.sys.id,
+          locale: "en",
+          producersmap: ee.sys.id,
+        }
+      );
+    });
+  });
+  return gg;
 }
 
-export default async function RegionIdPage({
+export default async function Producersmap({
   params,
 }: {
-  params: { region: any; locale: string };
+  params: { region: any; locale: string; producersmap: string };
 }) {
-  const { region } = params;
   const { locale } = params;
-  const selectedRegion: any = await getRegion(locale);
+  const { region } = params;
+  const { producersmap } = params;
+
+  // const regionLang: any = await getRegion(region, locale);
 
   // Fonction pour générer une position aléatoire dans une plage spécifique
   const getPosition = (min: any, max: any) => {
@@ -29,11 +52,11 @@ export default async function RegionIdPage({
   };
   return (
     <div style={{ display: "flex", flexWrap: "wrap" }}>
-      <img src={selectedRegion.logo.url} alt="region de france" />
-      {selectedRegion.producersRefCollection.items.map((element: any) => (
+      {/* <img src={regionLang.logo.url} alt="region de france" />
+      {regionLang.producersRefCollection.items.map((element: any) => (
         <Link
-          key={element.producer}
-          href={`/${region}/${locale}/producersmap/${element.producer}`}
+          key={element.sys.id}
+          href={`/${region}/${locale}/${element.sys.id}/${element.producer}`}
           style={{
             position: "absolute",
             top: getPosition(0, 500), // positions verticales
@@ -46,7 +69,10 @@ export default async function RegionIdPage({
         >
           {element.producer}
         </Link>
-      ))}
+      ))} */}
     </div>
   );
 }
+
+// {producersId} {regionLang}
+// {regionId}
