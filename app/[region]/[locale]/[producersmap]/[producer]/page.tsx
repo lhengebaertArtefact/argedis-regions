@@ -50,7 +50,6 @@ export default async function ProducersPage({
   return (
     <main className="">
       {documentToReactComponents(selectedProducer.producerDescription.json)}
-      <div>{selectedProducer}</div>
       <div>{producer}</div>
       <div>{locale}</div>
       <div>{region}</div>
