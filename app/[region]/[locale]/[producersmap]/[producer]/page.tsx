@@ -2,19 +2,14 @@ import Card from "@/app/components/Card";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 
 import {
+  getAllPages,
   getAllProducersNames,
   getPage,
-  getProducerLocale,
   getProducerName,
 } from "@/lib/clients/contentful";
 
-export async function generateStaticParams({
-  params,
-}: {
-  params: { producersmap: any; region: any; locale: string };
-}) {
-  const { producersmap, locale } = params;
-  const pages: any = await getPage(params.locale);
+export async function generateStaticParams() {
+  const pages: any = await getAllPages();
 
   const gg: any[] = [];
   pages.forEach((e: any) => {
@@ -23,14 +18,14 @@ export async function generateStaticParams({
         {
           region: e.sys.id,
           locale: "en",
-          producersmap: ee.sys.id,
-          producer: ee.producer,
+          producersmap: e.sys.id,
+          producer: ee.sys.id,
         },
         {
           region: e.sys.id,
           locale: "fr",
-          producersmap: ee.sys.id,
-          producer: ee.producer,
+          producersmap: e.sys.id,
+          producer: ee.sys.id,
         }
       );
     });
@@ -42,34 +37,24 @@ export default async function ProducersPage({
   params,
 }: {
   params: {
-    producer: any;
-    locale: string;
     region: string;
+    locale: string;
     producersmap: string;
+    producer: string;
   };
 }) {
-  const { producer } = params;
-  const { locale } = params;
-  const { region } = params;
-  const { producersmap } = params;
+  const { region, locale, producersmap, producer } = params;
+  // j'ai un seul nom qui est extrait
+  const selectedProducer: any = await getProducerName(producer, locale);
 
   return (
     <main className="">
-      {/* {documentToReactComponents(dataProducer.producerDescription.json)}
-      {allProducersNames}
-      <div>{selectedProducer}</div> */}
+      {documentToReactComponents(selectedProducer.producerDescription.json)}
+      <div>{selectedProducer}</div>
       <div>{producer}</div>
       <div>{locale}</div>
       <div>{region}</div>
-      <div>{producersmap}</div>
+      <div>{selectedProducer.producer}</div>
     </main>
   );
 }
-
-// // j'ai un seul nom qui est extrait
-// const selectedProducer: any = await getProducerName(producersmap, locale);
-
-// // j'ai un objet producer unique
-// const dataProducer: any = await getProducerLocale(locale, producer);
-
-// const allProducersNames: any = await getAllProducersNames();

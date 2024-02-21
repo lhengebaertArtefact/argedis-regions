@@ -5,7 +5,6 @@ const fetchContentfulData = async (query: string): Promise<any> => {
 
     {
       method: "POST",
-      cache: "no-cache",
       headers: {
         'Authorization': `Bearer ${process.env.CONTENTFUL_ACCESS_TOKEN}`,
         "Content-Type": "application/json",
@@ -227,33 +226,6 @@ export const getAllProducerId = async (slug: any): Promise<any | null> => {
   return producer;
 };
 
-export const getProducerLocale = async (locale: string, producerName: string ): Promise<any | null> => {
-
-  const transformLocale = locale === "fr" ? "fr" : "en-US"
-
-  let query = `{
-    producerCollection(locale: "${transformLocale}") {
-      items {
-        sys {
-          id
-        }
-        producer
-        producerPhoto {
-          url
-        }
-        producerDescription{
-          json
-        }
-      }
-    }
-  }`;
-
-  const res = await fetchContentfulData(query);
-  const producer: any | null = res.data.producerCollection?.items.find((element : any) => element.producer === producerName)
-
-  return producer;
-};
-
 export const getAllProducersNames = async (): Promise<any | null> => {
 
   let query = `{
@@ -285,8 +257,8 @@ export const getProducerName = async (slug: any, locale: string): Promise<any | 
 
   let query = `{
     producerCollection(where : { sys : { id: "${slug}"}}, locale: "${transformLocale}") {
-      items {
-        sys {
+    items {
+      sys {
           id
         }
         producer
@@ -301,7 +273,7 @@ export const getProducerName = async (slug: any, locale: string): Promise<any | 
   }`;
 
   const res = await fetchContentfulData(query);
-  const producer: any | null = res.data.producerCollection?.items[0].producer
+  const producer: any | null = res.data.producerCollection?.items[0] || null
 
   return producer;
 };

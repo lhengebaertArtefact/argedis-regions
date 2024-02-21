@@ -7,13 +7,8 @@ import {
 } from "@/lib/clients/contentful";
 import Link from "next/link";
 
-export async function generateStaticParams({
-  params,
-}: {
-  params: { producersmap: any; region: any; locale: string };
-}) {
-  const { producersmap, locale } = params;
-  const pages: any = await getPage(params.locale);
+export async function generateStaticParams() {
+  const pages: any = await getAllPages();
 
   const gg: any[] = [];
   pages.forEach((e: any) => {
@@ -22,12 +17,12 @@ export async function generateStaticParams({
         {
           region: e.sys.id,
           locale: "fr",
-          producersmap: ee.sys.id,
+          producersmap: e.sys.id,
         },
         {
           region: e.sys.id,
           locale: "en",
-          producersmap: ee.sys.id,
+          producersmap: e.sys.id,
         }
       );
     });
@@ -42,9 +37,8 @@ export default async function Producersmap({
 }) {
   const { locale } = params;
   const { region } = params;
-  const { producersmap } = params;
 
-  // const regionLang: any = await getRegion(region, locale);
+  const regionLang: any = await getRegion(region, locale);
 
   // Fonction pour générer une position aléatoire dans une plage spécifique
   const getPosition = (min: any, max: any) => {
@@ -52,11 +46,11 @@ export default async function Producersmap({
   };
   return (
     <div style={{ display: "flex", flexWrap: "wrap" }}>
-      {/* <img src={regionLang.logo.url} alt="region de france" />
+      <img src={regionLang.logo.url} alt="region de france" />
       {regionLang.producersRefCollection.items.map((element: any) => (
         <Link
           key={element.sys.id}
-          href={`/${region}/${locale}/${element.sys.id}/${element.producer}`}
+          href={`/${region}/${locale}/${region}/${element.sys.id}`}
           style={{
             position: "absolute",
             top: getPosition(0, 500), // positions verticales
@@ -69,10 +63,7 @@ export default async function Producersmap({
         >
           {element.producer}
         </Link>
-      ))} */}
+      ))}
     </div>
   );
 }
-
-// {producersId} {regionLang}
-// {regionId}
