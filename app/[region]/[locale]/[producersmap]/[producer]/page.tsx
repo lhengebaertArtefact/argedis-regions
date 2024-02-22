@@ -1,12 +1,6 @@
-import Card from "@/app/components/Card";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 
-import {
-  getAllPages,
-  getAllProducersNames,
-  getPage,
-  getProducerName,
-} from "@/lib/clients/contentful";
+import { getAllPages, getProducerName } from "@/lib/clients/contentful";
 
 export async function generateStaticParams() {
   const pages: any = await getAllPages();
@@ -43,7 +37,7 @@ export default async function ProducersPage({
     producer: string;
   };
 }) {
-  const { region, locale, producersmap, producer } = params;
+  const { region, locale, producer } = params;
   // j'ai un seul nom qui est extrait
   const selectedProducer: any = await getProducerName(producer, locale);
 

@@ -10,6 +10,7 @@ const withPWA = require("@ducanh2912/next-pwa").default({
   workboxOptions: {
     disableDevLogs: true,
   },
+  cacheStartUrl: false,
 });
 
 const nextConfig = {};
